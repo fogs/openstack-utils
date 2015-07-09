@@ -2,6 +2,7 @@
 
 export BASE_DIR=$(cd $(dirname $0); pwd)
 export SCRIPTS_DIR=$BASE_DIR/scripts
+export TEMPL_DIR=$BASE_DIR/templates
 us=${BASE_DIR}/$(basename $0)
 export INSTALL_DIR=$HOME/.openstack
 export MAIN_ADDR=$($SCRIPTS_DIR/extract-main-address.sh)

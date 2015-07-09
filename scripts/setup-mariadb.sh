@@ -12,4 +12,6 @@ FLUSH PRIVILEGES;
 
 mysqladmin -u root password $MYSQL_PASS
 
+install -m 0644 -o root -g root $TEMPL_DIR/mysqld_openstack.cnf /etc/mysql/conf.d
+
 service mysql restart
