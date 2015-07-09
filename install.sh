@@ -37,3 +37,4 @@ fatal() {
 echo "Continuing installation as $(id -un)..."
 #$SCRIPTS_DIR/install-packages.sh || fatal "Installing packages"
 #$SCRIPTS_DIR/setup-mariadb.sh || fatal "Setting up MariaDB"
+#$SCRIPTS_DIR/setup-rabbitmq.sh || fatal "Setting up RabbitMQ"
