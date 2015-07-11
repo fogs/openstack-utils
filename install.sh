@@ -19,9 +19,9 @@ mkdir -p $INSTALL_DIR
 
 cd $INSTALL_DIR
 
-$SCRIPTS_DIR/init-passwords.sh openstackrc
+$SCRIPTS_DIR/init-passwords.sh install-openrc.sh
 
-. openstackrc
+. install-openrc.sh
 export RELEASE=kilo
 export OS_TOKEN=$ADMIN_TOKEN
 export OS_URL=http://controller:35357/v2.0
@@ -30,6 +30,9 @@ export OS_REGION_NAME=regionOne
 tail -n+$(awk '/^#### START-ROOT/{print NR+1}' $us) $us > /tmp/$$.sh
 
 trap "rm /tmp/$$.sh" EXIT
+
+$SCRIPTS_DIR/setup-openrc.sh
+. admin-openrc.sh
 
 sudo -E bash /tmp/$$.sh
 
@@ -45,7 +48,7 @@ fatal() {
 
 echo "Continuing installation as $(id -un)..."
 #$SCRIPTS_DIR/setup-etc-hosts.sh 127.0.0.1 || fatal "Setting up /etc/hosts"
-$SCRIPTS_DIR/install-packages.sh || fatal "Installing packages"
+#$SCRIPTS_DIR/install-packages.sh || fatal "Installing packages"
 #$SCRIPTS_DIR/setup-mariadb.sh || fatal "Setting up MariaDB"
-$SCRIPTS_DIR/setup-rabbitmq.sh || fatal "Setting up RabbitMQ"
-$SCRIPTS_DIR/setup-keystone.sh || fatal "Setting up Keystone"
+#$SCRIPTS_DIR/setup-rabbitmq.sh || fatal "Setting up RabbitMQ"
+#$SCRIPTS_DIR/setup-keystone.sh || fatal "Setting up Keystone"
