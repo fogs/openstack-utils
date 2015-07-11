@@ -1,3 +1,5 @@
 /patches
 /*.cnf
 /.credentials.sh
+/creds
+/openstackrc

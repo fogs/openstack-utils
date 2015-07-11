@@ -1,0 +1,49 @@
+capture_id() {
+  cmd=$1
+  shift
+  $cmd "$@" | tee /tmp/$$.out
+  id=$(sed -n '/^|\s*id\b/ s/|.*|\s*\(.*\)\s*|/\1/ p' /tmp/$$.out)
+  rm /tmp/$$.out
+}
+
+add_cred() {
+  if [ $# -lt 1 ]; then
+    echo "Usage: credentialVar"
+    return
+  fi
+
+  var=$1
+  pass=$(openssl rand -hex 10)
+  echo $var=$pass >> creds
+  if [[ $var = ADMIN_PASS ]]; then
+    echo "export OS_USERNAME=admin" >> openstackrc
+    echo "export OS_PASSWORD=$pass" >> openstackrc
+    . openstackrc
+  elif [[ $var = ADMIN_TOKEN ]]; then
+    echo "Don't forget to set admin_token=$pass in /etc/keystone/keystone.conf"
+    echo "and restart the keystone service."
+  fi
+
+  . creds
+
+  echo Added and loaded credential as \$$var
+}
+
+if [ -f creds ]; then
+  . creds
+fi
+
+if [ ! -f openstackrc ]; then
+
+  cat > openstackrc <<EOT
+export OS_CONTROLLER_HOST=controller
+export OS_TENANT_NAME=admin
+export OS_AUTH_URL=http://\$OS_CONTROLLER_HOST:35357/v2.0
+EOT
+
+fi
+
+. openstackrc
+
+export OS_SERVICE_TOKEN=$ADMIN_TOKEN
+export OS_SERVICE_ENDPOINT=http://$OS_CONTROLLER_HOST:35357/v2.0
