@@ -1,8 +1,11 @@
 #!/bin/bash
 
-echo "Setting up keystone"
-export SERVICE=keystone
-. $SCRIPTS_DIR/common.sh
+service_name=keystone
+desc="OpenStack Identity"
+service=identity
+user=admin
+role=admin
+. $SCRIPTS_DIR/setup-include.sh
 
 conf=/etc/keystone/keystone.conf
 paste=/etc/keystone/keystone-paste.ini
@@ -50,12 +53,9 @@ web_setup() {
 
 os_setup() {
   echo "...OpenStack services and endpoints"
-  service=identity
-  user=admin
-  role=admin
 
   os_cmd service create \
-      --name keystone --description "OpenStack Identity" $service
+      --name keystone --description "$desc" $service
 
   os_cmd endpoint create \
       --publicurl http://controller:5000/v2.0 \
@@ -84,6 +84,13 @@ os_setup() {
 
 }
 
+pkg_setup() {
+  echo "manual" > /etc/init/keystone.override
+  apt-get install -y keystone python-openstackclient \
+    apache2 libapache2-mod-wsgi memcached python-memcache
+}
+
+pkg_setup
 conf_setup
 db_setup
 web_setup

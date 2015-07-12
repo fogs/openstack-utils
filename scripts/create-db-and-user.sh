@@ -9,8 +9,6 @@ db=$1
 user=$2
 pw=$3
 
-echo "Setting up $user access to $db"
-
 echo "
 CREATE DATABASE IF NOT EXISTS $db;
 GRANT ALL PRIVILEGES ON $db.* TO '$user'@'localhost' \

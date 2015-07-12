@@ -32,7 +32,6 @@ tail -n+$(awk '/^#### START-ROOT/{print NR+1}' $us) $us > /tmp/$$.sh
 trap "rm /tmp/$$.sh" EXIT
 
 $SCRIPTS_DIR/setup-openrc.sh
-. admin-openrc.sh
 
 sudo -E bash /tmp/$$.sh
 
@@ -51,4 +50,9 @@ echo "Continuing installation as $(id -un)..."
 #$SCRIPTS_DIR/install-packages.sh || fatal "Installing packages"
 #$SCRIPTS_DIR/setup-mariadb.sh || fatal "Setting up MariaDB"
 #$SCRIPTS_DIR/setup-rabbitmq.sh || fatal "Setting up RabbitMQ"
+
 #$SCRIPTS_DIR/setup-keystone.sh || fatal "Setting up Keystone"
+. admin-openrc.sh
+
+#$SCRIPTS_DIR/setup-glance.sh || fatal "Setting up Glance"
+$SCRIPTS_DIR/setup-horizon.sh || fatal "Setting up Horizon"

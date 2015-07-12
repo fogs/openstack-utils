@@ -12,15 +12,12 @@ echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu" \
 
 apt-get update
 
-echo "manual" > /etc/init/keystone.override
-
 packages="
 crudini
 curl
 openvswitch-switch
 mariadb-server python-mysqldb
 rabbitmq-server
-keystone python-openstackclient apache2 libapache2-mod-wsgi memcached python-memcache
 "
 
 DEBIAN_FRONTEND=noninteractive apt-get -y install $packages
