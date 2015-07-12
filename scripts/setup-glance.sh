@@ -27,6 +27,7 @@ conf_setup() {
   crudini --set $conf_api DEFAULT notification_driver noop
 
   crudini --set $conf_api database connection mysql://${user}:${db_pass}@controller/${service_name}
+  crudini --set $conf_api keystone_authtoken auth_uri http://controller:5000
   crudini --set $conf_api keystone_authtoken auth_url http://controller:35357
   crudini --set $conf_api keystone_authtoken auth_plugin password
   crudini --set $conf_api keystone_authtoken project_domain_id $project_domain_id
@@ -44,6 +45,7 @@ conf_setup() {
   crudini --set $conf_registry DEFAULT Verbose True
 
   crudini --set $conf_registry database connection mysql://${user}:${db_pass}@controller/${service_name}
+  crudini --set $conf_registry keystone_authtoken auth_uri http://controller:5000
   crudini --set $conf_registry keystone_authtoken auth_url http://controller:35357
   crudini --set $conf_registry keystone_authtoken auth_plugin password
   crudini --set $conf_registry keystone_authtoken project_domain_id $project_domain_id
@@ -101,8 +103,8 @@ restart_services() {
   done
 }
 
-#os_setup
-#pkg_setup
+os_setup
+pkg_setup
 conf_setup
 db_setup
 web_setup
