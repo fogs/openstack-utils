@@ -1,19 +1,21 @@
 #!/bin/bash
 
+#ASSUMPTIONS
+# Machine supports KVM extension of QEMU
+
 service=compute
 service_name=nova
-public_url=http://controller:8774/v2/%\(tenant_id\)s
-internal_url=http://controller:8774/v2/%\(tenant_id\)s
-admin_url=http://controller:8774/v2/%\(tenant_id\)s
+# public_url=http://controller:8774/v2/%\(tenant_id\)s
+# internal_url=http://controller:8774/v2/%\(tenant_id\)s
+# admin_url=http://controller:8774/v2/%\(tenant_id\)s
 
 user=nova
 service_pass="$NOVA_PASS"
-db_pass="$NOVA_DBPASS"
-desc="OpenStack Compute"
-pkgs="nova-api nova-cert nova-conductor nova-consoleauth
-  nova-novncproxy nova-scheduler python-novaclient"
-init_services="nova-api nova-cert nova-consoleauth nova-scheduler nova-conductor nova-novncproxy"
-db_sync_op="db sync"
+# db_pass="$NOVA_DBPASS"
+# desc="OpenStack Compute"
+pkgs="nova-compute sysfsutils"
+init_services="nova-compute"
+# db_sync_op="db sync"
 
 project=service
 role=admin
@@ -33,10 +35,10 @@ conf_setup() {
   crudini --set $conf DEFAULT auth_strategy keystone
   crudini --set $conf DEFAULT rpc_backend rabbit
   crudini --set $conf DEFAULT my_ip $MAIN_ADDR
+  crudini --set $conf DEFAULT vnc_enabled True
   crudini --set $conf DEFAULT vncserver_listen $MAIN_ADDR
   crudini --set $conf DEFAULT vncserver_proxyclient_address $MAIN_ADDR
-
-  crudini --set $conf database connection mysql://${user}:${db_pass}@controller/${service_name}
+  crudini --set $conf DEFAULT novncproxy_base_url http://$NOVA_ADDR:6080/vnc_auto.html
 
   crudini --set $conf oslo_messaging_rabbit rabbit_host controller
   crudini --set $conf oslo_messaging_rabbit rabbit_userid openstack
@@ -58,38 +60,15 @@ conf_setup() {
 }
 
 db_setup() {
-  echo "...database"
-
-  $SCRIPTS_DIR/create-db-and-user.sh $service_name $user "$db_pass"
-
-  su -s /bin/sh -c "${service_name}-manage $db_sync_op" $service_name
-
-  rm -f /var/lib/${service_name}/${service_name}.db
+  true
 }
 
 web_setup() {
   true
 }
 
-
 os_setup() {
-  echo "...OpenStack services and endpoints"
-
-  os_cmd user create \
-      --password $service_pass $user
-
-  os_cmd role add \
-    --project $project --user $user $role
-
-  os_cmd service create \
-      --name $service_name --description "$desc" $service
-
-  os_cmd endpoint create \
-    --publicurl "$public_url" \
-    --internalurl "$internal_url" \
-    --adminurl "$admin_url" \
-    --region $OS_REGION_NAME \
-    $service
+  true
 }
 
 pkg_setup() {

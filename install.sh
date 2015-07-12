@@ -7,6 +7,7 @@ us=${BASE_DIR}/$(basename $0)
 export INSTALL_DIR=$HOME/.openstack
 export MAIN_ADDR=$($SCRIPTS_DIR/extract-main-address.sh)
 export GLANCE_ADDR=controller
+export NOVA_ADDR=controller
 
 #### MAIN #####################################################################
 
@@ -56,5 +57,6 @@ echo "Continuing installation as $(id -un)..."
 . admin-openrc.sh
 
 #$SCRIPTS_DIR/setup-glance.sh || fatal "Setting up Glance"
-$SCRIPTS_DIR/setup-nova-controller.sh || fatal "Setting up Nova Controller"
+#$SCRIPTS_DIR/setup-nova-controller.sh || fatal "Setting up Nova Controller"
+$SCRIPTS_DIR/setup-nova-node.sh || fatal "Setting up Nova Node"
 #$SCRIPTS_DIR/setup-horizon.sh || fatal "Setting up Horizon"
