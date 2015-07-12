@@ -35,9 +35,9 @@ conf_setup() {
   crudini --set $conf DEFAULT core_plugin ml2
   crudini --set $conf DEFAULT service_plugins router
   crudini --set $conf DEFAULT allow_overlapping_ips True
-  crudini --set $conf DEFAULT notify_nova_on_port_status_changes = True
-  crudini --set $conf DEFAULT notify_nova_on_port_data_changes = True
-  crudini --set $conf DEFAULT nova_url = http://$NOVA_ADDR:8774/v2
+  crudini --set $conf DEFAULT notify_nova_on_port_status_changes True
+  crudini --set $conf DEFAULT notify_nova_on_port_data_changes True
+  crudini --set $conf DEFAULT nova_url http://$NOVA_ADDR:8774/v2
 
   crudini --set $conf database connection mysql://${user}:${db_pass}@controller/${service_name}
 
@@ -68,9 +68,9 @@ conf_setup() {
   crudini --set $conf_ml2 ml2 mechanism_drivers openvswitch
 
   crudini --set $conf_ml2 ml2_type_gre tunnel_id_ranges 1:1000
-  crudini --set $conf_ml2 securitygroup enable_security_group = True
-  crudini --set $conf_ml2 securitygroup enable_ipset = True
-  crudini --set $conf_ml2 securitygroup firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+  crudini --set $conf_ml2 securitygroup enable_security_group True
+  crudini --set $conf_ml2 securitygroup enable_ipset True
+  crudini --set $conf_ml2 securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
 
 }
 
@@ -119,9 +119,9 @@ restart_services() {
   done
 }
 
-os_setup
-pkg_setup
+# os_setup
+# pkg_setup
 conf_setup
-db_setup
-web_setup
+# db_setup
+# web_setup
 restart_services
