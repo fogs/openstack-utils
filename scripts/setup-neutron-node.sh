@@ -85,7 +85,11 @@ set -x
   crudini --set $conf_l3_agent DEFAULT router_delete_namespaces True
   crudini --set $conf_l3_agent DEFAULT verbose True
 
+  crudini --set $conf_dhcp_agent DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
+  crudini --set $conf_dhcp_agent DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
+  crudini --set $conf_dhcp_agent DEFAULT dhcp_delete_namespaces True
   crudini --set $conf_dhcp_agent DEFAULT dnsmasq_config_file /etc/neutron/dnsmasq-neutron.conf
+  crudini --set $conf_dhcp_agent DEFAULT verbose True
 
   touch $conf_dnsmasq
   chown root:$user $conf_dnsmasq
@@ -151,4 +155,4 @@ conf_setup
 # db_setup
 # web_setup
 restart_services
-extra_setup
+# extra_setup
