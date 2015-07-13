@@ -38,13 +38,9 @@ set -e
 
 conf_setup() {
   echo "...configuration"
-set -x
+
   install $TEMPL_DIR/neutron_sysctl.conf /etc/sysctl.d/99-neutron.conf
   sysctl -p
-
-  crudini --set $conf DEFAULT core_plugin ml2
-  crudini --set $conf DEFAULT service_plugins router
-  crudini --set $conf DEFAULT allow_overlapping_ips True
 
   crudini --set $conf DEFAULT rpc_backend rabbit
   crudini --set $conf oslo_messaging_rabbit rabbit_host controller
@@ -60,6 +56,10 @@ set -x
   crudini --set $conf keystone_authtoken project_name $project
   crudini --set $conf keystone_authtoken username $user
   crudini --set $conf keystone_authtoken password "$service_pass"
+
+  crudini --set $conf DEFAULT core_plugin ml2
+  crudini --set $conf DEFAULT service_plugins router
+  crudini --set $conf DEFAULT allow_overlapping_ips True
 
   crudini --set $conf_ml2 ml2 type_drivers flat,vlan,gre,vxlan
   crudini --set $conf_ml2 ml2 tenant_network_types gre
@@ -120,10 +120,23 @@ set -x
 extra_setup() {
 
   if ! ovs-vsctl list-br | grep $br_ex > /dev/null; then
-    ovs-vsctl add-br $br_ex
-    ovs-vsctl add-port $br_ex $if_ex
+    ovs-vsctl add-br br-proxy
+    ovs-vsctl add-port br-proxy $if_ex
+    ifconfig br-proxy $MAIN_ADDR up
+    ip link set br-proxy promisc on
+    ip link add proxy-br-eth1 type veth peer name eth1-br-proxy
+    ip link add proxy-br-ex type veth peer name ex-br-proxy
+    ovs-vsctl add-br br-eth1
+    ovs-vsctl add-br br-ex
+    ovs-vsctl add-port br-eth1 eth1-br-proxy
+    ovs-vsctl add-port br-ex ex-br-proxy
+    ovs-vsctl add-port br-proxy proxy-br-eth1
+    ovs-vsctl add-port br-proxy proxy-br-ex
+    ip link set eth1-br-proxy up promisc on
+    ip link set ex-br-proxy up promisc on
+    ip link set proxy-br-eth1 up promisc on
+    ip link set proxy-br-ex up promisc on
   fi
-
 }
 
 db_setup() {
